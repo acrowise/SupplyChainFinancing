@@ -13,8 +13,8 @@ const cpState = {
 	INVOICE: 2,
 	ISSUE: 3,
 	CONFIRM: 4,
-	DEPOSIT: 5,
-	APPROVE: 6,
+	EARLYPAY: 5,
+	ACKNOWLEDGE: 6,
 	PAY: 7
 };
 
@@ -63,11 +63,11 @@ class CommercialPaper extends State {
 	setConfirm() {
 		this.currentState = cpState.CONFIRM;
 	}
-	setDeposit() {
-		this.currentState = cpState.DEPOSIT;
+	setEarlyPay() {
+		this.currentState = cpState.EARLYPAY;
 	}
-	setApprove() {
-		this.currentState = cpState.APPROVE;
+	setAcknowledge() {
+		this.currentState = cpState.ACKNOWLEDGE;
 	}
 	setPay() {
 		this.currentState = cpState.PAY;
@@ -84,11 +84,11 @@ class CommercialPaper extends State {
 	isConfirm() {
 		return this.currentState === cpState.CONFIRM;
 	}
-    isDeposit() {
-        return this.currentState === cpState.DEPOSIT;
+    isEarlyPay() {
+        return this.currentState === cpState.EARLYPAY;
     }
-	isApprove() {
-		return this.currentState === cpState.APPROVE;
+	isAcknowledge() {
+		return this.currentState === cpState.ACKNOWLEDGE;
 	}
     isPay() {
         return this.currentState === cpState.PAY;
