@@ -62,49 +62,19 @@ async function main() {
 
     const contract = await network.getContract('papercontract', 'org.papernet.commercialpaper');
 
-    // approve commercial paper
-    console.log('Submit commercial paper approve transaction.');
+    // acknowledge commercial paper
+    console.log('Submit commercial paper acknowledge transaction.');
 
-    const approveResponse = await contract.submitTransaction('approve', 'buyer', '00001', 'supplier','buyer','300000','2019-20-02' );
+    const acknowledgeResponse = await contract.submitTransaction('acknowledge', 'supplier', '00001', 'supplier','buyer','300000','2019-20-02' );
 
     // process response
-    console.log('Process approve transaction response.');
+    console.log('Process acknowledge transaction response.');
 
-    let paper = CommercialPaper.fromBuffer(approveResponse);
+    let paper = CommercialPaper.fromBuffer(acknowledgeResponse);
 
-    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully approved by ${paper.owner}`);
+    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully acknowledged by ${paper.issuer} to ${paper.owner}`);
     console.log('Transaction complete.');
-//
-//
-//     // Connect to gateway using application specified parameters
-//     console.log('Connect to Fabric gateway.');
-//
-//     // await gateway.connect(connectionProfile, connectionOptions);
-//
-//     // Access PaperNet network
-//     console.log('Use network channel: mychannel.');
-//
-//     // const network = await gateway.getNetwork('mychannel');
-//
-//     // Get addressability to commercial paper contract
-//     console.log('Use org.papernet.commercialpaper smart contract.');
-//
-//     // const contract = await network.getContract('papercontract', 'org.papernet.commercialpaper');
-//
-//     // confirm commercial paper
-//     console.log('Submit commercial paper confirm transaction.');
-//
-//     // const confirmResponse = await contract.submitTransaction('confirm', 'buyer', '00001', 'buyer','funder','300000','2019-20-02' );
-//
-// 	console.log(`2019-3-18T03:15:06.456 - info: [TransactionEventHandler]: _strategySuccess: strategy success for transaction "2a0abdb54325085602782bbce624d3c38ec03101e31a9db7c4ca34e2142ff1c1"`)
-//     // process response
-//     console.log('Process confirm transaction response.');
-//
-//     // let paper = CommercialPaper.fromBuffer(confirmResponse);
-// //2a0abdb54325085602782bbce624d3c38ec03101e31a9db7c4ca34e2142ff1c1
-//     // console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully confirmed by ${paper.owner}`);
-// 	console.log(`buyer commercial paper : 00001 successfully approved by supplier`);
-//     console.log('Transaction complete.');
+
   } catch (error) {
 
     console.log(`Error processing transaction. ${error}`);
