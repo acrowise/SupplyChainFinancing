@@ -62,18 +62,17 @@ async function main() {
 
 	    const contract = await network.getContract('papercontract', 'org.papernet.commercialpaper');
 
-	    // deposit commercial paper
-	    console.log('Submit commercial paper deposit transaction.');
+	    // Early pay commercial paper
+	    console.log('Submit commercial paper earlyPay transaction.');
 
-	    const depositResponse = await contract.submitTransaction('deposit', 'buyer', '00001', 'funder','supplier','2019-20-02', '300000' );
-	// 'issue', 'buyer', '00001', 'funder', 'buyer', '2019-20-04', '300000'
+	    const earlyPayResponse = await contract.submitTransaction('earlyPay', 'funder', '00001', 'funder','supplier','2019-20-02', '300000' );
 
 	    // process response
-	    console.log('Process statement deposit response.');
+	    console.log('Process statement earlyPay response.');
 
-	    let paper = CommercialPaper.fromBuffer(depositResponse);
+	    let paper = CommercialPaper.fromBuffer(earlyPayResponse);
 
-	    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully funded by ${paper.owner}`);
+	    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully early paid by ${paper.issuer} to ${paper.owner}`);
 	    console.log('Transaction complete.');
 
 
@@ -92,11 +91,11 @@ async function main() {
 }
 main().then(() => {
 
-  console.log('Deposit program complete.');
+  console.log('earlyPay program complete.');
 
 }).catch((e) => {
 
-  console.log('Deposit program exception.');
+  console.log('earlyPay program exception.');
   console.log(e);
   console.log(e.stack);
   process.exit(-1);
