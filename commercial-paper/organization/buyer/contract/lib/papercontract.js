@@ -94,8 +94,6 @@ class CommercialPaperContract extends Contract {
     */
     async invoice(ctx, issuer, paperNumber, currentOwner, newOwner, invoice, invoiceDateTime) {
 		
-		
-
         // Retrieve the current paper using key fields provided
         let paperKey = CommercialPaper.makeKey([issuer, paperNumber]);
         let paper = await ctx.paperList.getPaper(paperKey);
@@ -111,12 +109,10 @@ class CommercialPaperContract extends Contract {
         }
 
         // Check paper is not already INVOICE
-		// console.log('dfgvhbjnkfgbhjnkmkhbjknlnm')
         if (paper.isInvoice()) {
-			console.log('dfgvhbjnkfgbhjnkmkhbjknlnm')
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not invoiced. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not invoiced. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
@@ -155,7 +151,7 @@ class CommercialPaperContract extends Contract {
         if (paper.isIssue()) {
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not issued. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not issued. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
@@ -185,16 +181,16 @@ class CommercialPaperContract extends Contract {
             throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
         }
 
-        // First buy moves state from ISSUED to INVOICE
+        // First buy moves state from ISSUE to CONFIRM
         if (paper.isIssue()) {
             paper.setConfirm();
         }
 
-        // Check paper is not already INVOICE
+        // Check paper is not already CONFIRM
         if (paper.isConfirm()) {
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not confirmed. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not confirmed. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
@@ -203,56 +199,17 @@ class CommercialPaperContract extends Contract {
     }
 	
     /**
-     * Deposit commercial paper
+     * Early Pay commercial paper
      *
      * @param {Context} ctx the transaction context
      * @param {String} issuer commercial paper issuer
      * @param {Integer} paperNumber paper number for this issuer
      * @param {String} currentOwner current owner of paper
      * @param {String} newOwner new owner of paper
-     * @param {Integer} deposit price paid for this paper
-     * @param {String} depositDateTime time paper was purchased (i.e. traded)
+     * @param {Integer} earlyPay price paid for this paper
+     * @param {String} earlyPayDateTime time paper was purchased (i.e. traded)
     */
-    async deposit(ctx, issuer, paperNumber, currentOwner, newOwner, deposit, depositDateTime) {
-
-        // Retrieve the current paper using key fields provided
-        let paperKey = CommercialPaper.makeKey([issuer, paperNumber]);
-        let paper = await ctx.paperList.getPaper(paperKey);
-
-        // Validate current owner
-        if (paper.getOwner() !== currentOwner) {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner+" deposit_buyer" );
-        }
-
-        // First buy moves state from ISSUED to DEPOSIT
-        if (paper.isConfirm()) {
-            paper.setDeposit();
-        }
-
-        // Check paper is not already deposit
-        if (paper.isDeposit()) {
-            paper.setOwner(newOwner);
-        } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not deposited. Current state = ' +paper.getCurrentState());
-        }
-
-        // Update the paper
-        await ctx.paperList.updatePaper(paper);
-        return paper.toBuffer();
-    }
-	
-	/**
-     * Approve commercial paper
-     *
-     * @param {Context} ctx the transaction context
-     * @param {String} issuer commercial paper issuer
-     * @param {Integer} paperNumber paper number for this issuer
-     * @param {String} currentOwner current owner of paper
-     * @param {String} newOwner new owner of paper
-     * @param {Integer} approve price paid for this paper
-     * @param {String} approveDateTime time paper was purchased (i.e. traded)
-    */
-    async approve(ctx, issuer, paperNumber, currentOwner, newOwner, approve, approveDateTime) {
+    async earlyPay(ctx, issuer, paperNumber, currentOwner, newOwner, earlyPay, earlyPayDateTime) {
 
         // Retrieve the current paper using key fields provided
         let paperKey = CommercialPaper.makeKey([issuer, paperNumber]);
@@ -263,16 +220,55 @@ class CommercialPaperContract extends Contract {
             throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
         }
 
-        // First buy moves state from ISSUED to INVOICE
-        if (paper.isDeposit()) {
-            paper.setApprove();
+        // First buy moves state from CONFIRM to EARLYPAY
+        if (paper.isConfirm()) {
+            paper.setEarlyPay();
         }
 
-        // Check paper is not already INVOICE
-        if (paper.isApprove()) {
+        // Check paper is not already early paid
+        if (paper.isEarlyPay()) {
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not approved. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not early paid. Current state = ' + paper.getCurrentState());
+        }
+
+        // Update the paper
+        await ctx.paperList.updatePaper(paper);
+        return paper.toBuffer();
+    }
+	
+	/**
+     * Acknowledge commercial paper
+     *
+     * @param {Context} ctx the transaction context
+     * @param {String} issuer commercial paper issuer
+     * @param {Integer} paperNumber paper number for this issuer
+     * @param {String} currentOwner current owner of paper
+     * @param {String} newOwner new owner of paper
+     * @param {Integer} acknowledgee price paid for this paper
+     * @param {String} acknowledgeDateTime time paper was purchased (i.e. traded)
+    */
+    async acknowledge(ctx, issuer, paperNumber, currentOwner, newOwner, acknowledge, acknowledgeDateTime) {
+
+        // Retrieve the current paper using key fields provided
+        let paperKey = CommercialPaper.makeKey([issuer, paperNumber]);
+        let paper = await ctx.paperList.getPaper(paperKey);
+
+        // Validate current owner
+        if (paper.getOwner() !== currentOwner) {
+            throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
+        }
+
+        // First buy moves state from EARLYPAY to ACKNOWLEDGE
+        if (paper.isEarlyPay()) {
+            paper.setAcknowledge();
+        }
+
+        // Check paper is not already ACKNOWLEDGE
+        if (paper.isAcknowledge()) {
+            paper.setOwner(newOwner);
+        } else {
+            throw new Error('Paper ' + issuer + paperNumber + ' is not acknowledged. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
@@ -302,16 +298,16 @@ class CommercialPaperContract extends Contract {
             throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
         }
 
-        // First buy moves state from DEPOSIT to PAY
-        if (paper.isApprove()) {
+        // First buy moves state from ACKNOWLEDGE to PAY
+        if (paper.isAcknowledge()) {
             paper.setPay();
         }
 
-        // Check paper is not already deposit
+        // Check paper is not already pay
         if (paper.isPay()) {
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not paid. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not paid. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
