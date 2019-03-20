@@ -72,7 +72,7 @@ async function main() {
 
     let paper = CommercialPaper.fromBuffer(purchaseResponse);
 
-    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully purchased by ${paper.issuer} to ${paper.owner}`);
+    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully purchase to ${paper.owner}`);
     console.log('Transaction complete.');
 
   } catch (error) {

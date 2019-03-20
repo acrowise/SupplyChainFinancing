@@ -65,14 +65,14 @@ async function main() {
 	    // Early pay commercial paper
 	    console.log('Submit commercial paper earlyPay transaction.');
 
-	    const earlyPayResponse = await contract.submitTransaction('earlyPay', 'funder', '00001', 'funder','supplier','2019-20-02', '300000' );
+	    const earlyPayResponse = await contract.submitTransaction('earlyPay', 'buyer', '00001', 'funder','supplier','2019-20-02', '300000' );
 
 	    // process response
 	    console.log('Process statement earlyPay response.');
 
 	    let paper = CommercialPaper.fromBuffer(earlyPayResponse);
 
-	    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully early paid by ${paper.issuer} to ${paper.owner}`);
+	    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully early pay to ${paper.owner}`);
 	    console.log('Transaction complete.');
 
 
