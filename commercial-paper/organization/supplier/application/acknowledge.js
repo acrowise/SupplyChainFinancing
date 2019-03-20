@@ -65,14 +65,14 @@ async function main() {
     // acknowledge commercial paper
     console.log('Submit commercial paper acknowledge transaction.');
 
-    const acknowledgeResponse = await contract.submitTransaction('acknowledge', 'supplier', '00001', 'supplier','buyer','300000','2019-20-02' );
+    const acknowledgeResponse = await contract.submitTransaction('acknowledge', 'buyer', '00001', 'supplier','buyer','300000','2019-20-02' );
 
     // process response
     console.log('Process acknowledge transaction response.');
 
     let paper = CommercialPaper.fromBuffer(acknowledgeResponse);
 
-    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully acknowledged by ${paper.issuer} to ${paper.owner}`);
+    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully acknowledge to ${paper.owner}`);
     console.log('Transaction complete.');
 
   } catch (error) {
